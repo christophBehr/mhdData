@@ -1,0 +1,12 @@
+'E-Datum';'Einnsatz Nr';'KFZ';'Transport von';'Transport nach';'Fahrgast';'Start';'Ende';'Infektion';'Tarifzone';'Belegart';'Tarifzone'
+'22.08.2020';'123456';'1-KTW-2';'Adresse1';'Adresse2';'Müller, Hans';'07:00';'08:00';'N';'10';'Standart';'KTP'
+'22.08.2020';'123456';'1-KTW-2';'Adresse1';'Adresse2';'Müller, Hans';'08:00';'09:00';'J';'10';'Standart';'KTP'
+'22.08.2020';'123456';'1-KTW-3';'Adresse1';'Adresse2';'Müller, Hans';'09:00';'10:00';'N';'10';'Standart';'KTP'
+'22.08.2020';'123456';'1-KTW-3';'Adresse1';'Adresse2';'Müller, Hans';'10:00';'11:00';'J';'10';'Standart';'KTP'
+'22.08.2020';'123456';'1-KTW-4';'Adresse1';'Adresse2';'Müller, Hans';'10:00';'11:00';'N';'10';'Standart';'KTP'
+'22.08.2020';'123456';'1-KTW-4';'Adresse1';'Adresse2';'Müller, Hans';'11:00';'12:00';'J';'10';'Standart';'KTP'
+'22.08.2020';'123456';'1-KTW-5';'Adresse1';'Adresse2';'Müller, Hans';'09:00';'10:00';'N';'10';'Standart';'KTP'
+'22.08.2020';'123456';'1-KTW-5';'Adresse1';'Adresse2';'Müller, Hans';'10:00';'11:00';'J';'10';'Standart';'KTP'
+'22.08.2020';'123456';'1-KTW-6';'Adresse1';'Adresse2';'Müller, Hans';'11:00';'12:00';'N';'10';'Standart';'KTP'
+'22.08.2020';'123456';'1-KTW-6';'Adresse1';'Adresse2';'Müller, Hans';'12:00';'13:00';'J';'10';'Standart';'KTP'
+
