@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import datetime as dt
 from datetime import timedelta
 
@@ -129,8 +130,10 @@ def auswertungFMS(ktwFMS):
 
 
 def auswertungStatistik(fahrtenStatistik):
+    global dfOut 
     auswertung = fahrtenStatistik
     
+
     fahrten12 = auswertung[auswertung.KFZ == "'1-KTW-2'"].shape[0]
     iFahrten12 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'1-KTW-2'")].shape[0]
     fahrten13 = auswertung[auswertung.KFZ == "'1-KTW-3'"].shape[0]
@@ -146,7 +149,11 @@ def auswertungStatistik(fahrtenStatistik):
                           "Fahrten":[fahrten12, fahrten13, fahrten14, fahrten15, fahrten16],
                           "I-Fahrten":[iFahrten12, iFahrten13, iFahrten14, iFahrten15, iFahrten16]})
     dfOut.to_csv(AUSWERTUNGSTATISTIK)
+    return(dfOut)
 
+def plotData(dfOUt):
+    df = dfOut
+    plt.plot(df["KFZ"], df["Fahrten"])
 
 data()    
 ktwFMS(belegArchiv)
@@ -154,5 +161,5 @@ fahrtenStatistik(belegArchiv)
 abrechnung(belegArchiv)
 auswertungFMS(ktwFMS)
 auswertungStatistik(fahrtenStatistik)
-
+plotData(dfOut)
 
