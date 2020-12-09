@@ -12,9 +12,13 @@ FAHRTENSTATISTIK = "data/fahrtenStatistik.csv"
 ABRECHNUNG = "data/abrechnung.csv"
 AUSWERTUNGFMS = "data/auswertungFMS.csv"
 AUSWERTUNGSTATISTIK = "data/auswertungStatistik.csv"
+
+belegArchiv = None
+dfOut = None
+
 def data():
     """
-    Konvertiert den .txt Exportr aus dem Belegarchiv in eine .csv Datei
+    Konvertiert den .txt Exportiert aus dem Belegarchiv in .csv Datei
     """
     global belegArchiv
     data = pd.read_csv(PATHTXT, sep = ";", names=["E-Datum", "Einsatz Nr.", "KFZ", "Transport von",
