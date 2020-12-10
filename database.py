@@ -20,6 +20,15 @@ AUSWERTUNGSTATISTIKGOING = "data/auswertungStatistikOngoing.csv"
 belegArchiv = None
 dfOut = None
 
+def strfdelta(timedelta, fmt):
+    """
+    Format für timedelta Objekte. Es werden nur Stunden und Minuten angezeigt
+    """
+    d = {'days': timedelta.days}
+    d['hours'], rem = divmod(timedelta.seconds, 3600)
+    d['minutes'], d['seconds'] = divmod(rem, 60)
+    return(fmt.format(**d))
+
 def data():
     """
     Konvertiert den .txt Exportiert aus dem Belegarchiv in .csv Datei
@@ -31,23 +40,8 @@ def data():
     data = data.iloc[1:]
     belegArchiv = pd.DataFrame(data)
     belegArchiv.to_csv(BELEGARCHIV, encoding = 'utf-8')
+    writeToArchive(BELEGARCHIV, BELEGARCHIVONGOING)
     return(belegArchiv)
-
-def belegArchivOngoing(belegArchiv):
-    """
-    Hängt die Tagesauswertung (Belegarchiv) an das Hauptarchiv (BELEGARCHIVONGOING) an
-    """
-    #Lese aktuelles Belegarchiv
-    dataNew = pd.read_csv(BELEGARCHIV, index_col=0)
-    belegArchivNew = pd.DataFrame(dataNew)
-    
-    #Lese das weiterlaufende Belegarchiv
-    dataOld = pd.read_csv(BELEGARCHIVONGOING, index_col=0)
-    belegArchivOld = pd.DataFrame(dataOld)
-
-    belegArchivMerge = belegArchivOld.append(belegArchivNew, ignore_index = True, sort = False)
-    belegArchivMerge.to_csv(BELEGARCHIVONGOING, encoding = 'utf-8')
-
 
 def ktwFMS(belegArchiv):
     """
@@ -58,22 +52,8 @@ def ktwFMS(belegArchiv):
     ktwFMS = belegArchiv[["E-Datum", "KFZ", "Start", "Ende"]]
 
     ktwFMS.to_csv(KTWFMS, encoding='utf-8')
+    writeToArchive(KTWFMS, KTWFMSGOING)
     return(ktwFMS)
-
-def ktwFMSOngoing(ktwFMS):
-    """
-    Hängt die Tagesauswertung (ktwFMS) an das Hauptarchiv (KTWFMSGOING) an
-    """
-    #Lese aktuelle FMS
-    dataNew = pd.read_csv(KTWFMS, index_col=0)
-    ktwFMSNew = pd.DataFrame(dataNew)
-    
-    #Lese die weiterlaufenden FMS
-    dataOld = pd.read_csv(KTWFMSGOING, index_col=0)
-    ktwFMSOld = pd.DataFrame(dataOld)
-
-    ktwFMSMerge = ktwFMSOld.append(ktwFMSNew, ignore_index = True, sort = False)
-    ktwFMSMerge.to_csv(KTWFMSGOING, encoding = 'utf-8')
 
 def fahrtenStatistik(belegArchiv):
     """
@@ -96,17 +76,6 @@ def abrechnung(belegArchiv):
 
     abrechnung.to_csv(ABRECHNUNG, encoding='utf-8')
     return(abrechnung)
-
-
-def strfdelta(timedelta, fmt):
-    """
-    Format für timedelta Objekte. Es werden nur Stunden und Minuten angezeigt
-    """
-    d = {'days': timedelta.days}
-    d['hours'], rem = divmod(timedelta.seconds, 3600)
-    d['minutes'], d['seconds'] = divmod(rem, 60)
-    return(fmt.format(**d))
-
 
 def auswertungFMS(ktwFMS):
 
@@ -238,23 +207,8 @@ def auswertungFMS(ktwFMS):
                                         strfdelta(delta58, '{hours}:{minutes}'),
                                         strfdelta(delta59, '{hours}:{minutes}')]})
     auswertungFMS.to_csv(AUSWERTUNGFMS)
+    writeToArchive(AUSWERTUNGFMS, AUSWERTUNGFMSGOING)
     return(auswertungFMS)
-
-def auswertungFMSOngoing(auswertungFMS):
-    """
-    Hängt die Tagesauswertung (auswertungFMS) an das Hauptarchiv (AUSWERTUNGFMSONGOING) an
-    """
-    #Lese aktuelle FMS
-    dataNew = pd.read_csv(AUSWERTUNGFMS, index_col=0)
-    auswertungFMSNew = pd.DataFrame(dataNew)
-    
-    #Lese die weiterlaufenden FMS
-    dataOld = pd.read_csv(AUSWERTUNGFMSGOING, index_col=0)
-    auswertungFMSOld = pd.DataFrame(dataOld)
-
-    ktwFMSMerge = auswertungFMSOld.append(auswertungFMSNew, ignore_index = True, sort = False)
-    ktwFMSMerge.to_csv(AUSWERTUNGFMSGOING, encoding = 'utf-8')
-
 
 def auswertungStatistik(fahrtenStatistik):
     global auswertungStatistik 
@@ -297,35 +251,31 @@ def auswertungStatistik(fahrtenStatistik):
                           "I-Fahrten":[iFahrten12, iFahrten13, iFahrten14, iFahrten15, iFahrten16,
                                        iFahrten52, iFahrten53, iFahrten54, iFahrten55, iFahrten56, iFahrten57, iFahrten58, iFahrten59]})
     auswertungStatistik.to_csv(AUSWERTUNGSTATISTIK)
+    writeToArchive(AUSWERTUNGSTATISTIK, AUSWERTUNGSTATISTIKGOING)
     return(auswertungStatistik)
 
-def auswertungStatistikOngoing(auswertungStatistik):
+def writeToArchive(readFile, writeFile):
     """
-    Hängt die Tagesauswertung (auswertungStatistik) an das Hauptarchiv (AUSWERUNGSTATISTIKGOING) an
+    Hängt die Tagesauswertung (Belegarchiv) an das Hauptarchiv (BELEGARCHIVONGOING) an
     """
-    #Lese aktuelle FMS
-    dataNew = pd.read_csv(AUSWERTUNGSTATISTIK, index_col=0)
-    auswertungStatistikNew = pd.DataFrame(dataNew)
+    #Lese aktuelles Belegarchiv
+    dataNew = pd.read_csv(readFile, index_col=0)
+    dataFrameNew = pd.DataFrame(dataNew)
     
-    #Lese die weiterlaufenden FMS
-    dataOld = pd.read_csv(AUSWERTUNGFMSGOING, index_col=0)
-    auswertungStatistikOld = pd.DataFrame(dataOld)
+    #Lese das weiterlaufende Belegarchiv
+    dataOld = pd.read_csv(writeFile, index_col=0)
+    dataFrameOld = pd.DataFrame(dataOld)
 
-    auswertungStatistikMerge = auswertungStatistikOld.append(auswertungStatistikNew, ignore_index = True, sort = False)
-    auswertungStatistikMerge.to_csv(AUSWERTUNGSTATISTIKGOING, encoding = 'utf-8')
-
-
+    dataFrameMerge = dataFrameOld.append(dataFrameNew, ignore_index = True, sort = False)
+    dataFrameMerge.to_csv(writeFile, encoding = 'utf-8')
 
 
 
-data()    
+
+
+data()
 ktwFMS(belegArchiv)
 fahrtenStatistik(belegArchiv)
 abrechnung(belegArchiv)
 auswertungFMS(ktwFMS)
 auswertungStatistik(fahrtenStatistik)
-belegArchivOngoing(belegArchiv)
-ktwFMSOngoing(ktwFMS)
-auswertungFMSOngoing(auswertungFMS)
-auswertungStatistikOngoing(auswertungStatistik)
-
