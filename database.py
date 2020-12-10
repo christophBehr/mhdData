@@ -78,11 +78,10 @@ def abrechnung(belegArchiv):
     return(abrechnung)
 
 def auswertungFMS(ktwFMS):
-
-    global auswertungFMS
     """
     Erzeugt die Auswertungen der Standzeiten aus der ktwFMS DB
     """
+    global auswertungFMS
     #ausrueck =  aprox Zeit von alarmierung bis abholzeit
     ausrueck = timedelta(days = 0, hours = 0, minutes = 30)
 
@@ -256,7 +255,7 @@ def auswertungStatistik(fahrtenStatistik):
 
 def writeToArchive(readFile, writeFile):
     """
-    Hängt die Tagesauswertung (Belegarchiv) an das Hauptarchiv (BELEGARCHIVONGOING) an
+    Hängt die Tagesauswertung (readFile) an das Hauptarchiv (writeFile) an
     """
     #Lese aktuelles Belegarchiv
     dataNew = pd.read_csv(readFile, index_col=0)
