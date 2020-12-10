@@ -13,7 +13,9 @@ KTWFMSGOING = "data/ktwFMSOngoing.csv"
 FAHRTENSTATISTIK = "data/fahrtenStatistik.csv"
 ABRECHNUNG = "data/abrechnung.csv"
 AUSWERTUNGFMS = "data/auswertungFMS.csv"
+AUSWERTUNGFMSGOING = "data/auswertungFMSOngoing.csv"
 AUSWERTUNGSTATISTIK = "data/auswertungStatistik.csv"
+AUSWERTUNGSTATISTIKGOING = "data/auswertungStatistikOngoing.csv"
 
 belegArchiv = None
 dfOut = None
@@ -107,6 +109,8 @@ def strfdelta(timedelta, fmt):
 
 
 def auswertungFMS(ktwFMS):
+
+    global auswertungFMS
     """
     Erzeugt die Auswertungen der Standzeiten aus der ktwFMS DB
     """
@@ -218,7 +222,7 @@ def auswertungFMS(ktwFMS):
     obj59 = erste59.iloc[0]["Start"]
     delta59 = obj59 - start59 - ausrueck
 
-    dfOut = pd.DataFrame({'KFZ(Funk)':['1-KTW-2', '1-KTW-3', '1-KTW-4', '1-KTW-5', '1-KTW-6', 
+    auswertungFMS = pd.DataFrame({'KFZ(Funk)':['1-KTW-2', '1-KTW-3', '1-KTW-4', '1-KTW-5', '1-KTW-6', 
                                        '5-KTW-2', '5-KTW-3', '5-KTW-4', '5-KTW-5', '5-KTW-6', '5-KTW-7', '5-KTW-8', '5-KTW-9'],
                            'Standzeit':[strfdelta(delta12, '{hours}:{minutes}'), 
                                         strfdelta(delta13, '{hours}:{minutes}'), 
@@ -233,11 +237,27 @@ def auswertungFMS(ktwFMS):
                                         strfdelta(delta57, '{hours}:{minutes}'),
                                         strfdelta(delta58, '{hours}:{minutes}'),
                                         strfdelta(delta59, '{hours}:{minutes}')]})
-    dfOut.to_csv(AUSWERTUNGFMS)
+    auswertungFMS.to_csv(AUSWERTUNGFMS)
+    return(auswertungFMS)
+
+def auswertungFMSOngoing(auswertungFMS):
+    """
+    Hängt die Tagesauswertung (auswertungFMS) an das Hauptarchiv (AUSWERTUNGFMSONGOING) an
+    """
+    #Lese aktuelle FMS
+    dataNew = pd.read_csv(AUSWERTUNGFMS, index_col=0)
+    auswertungFMSNew = pd.DataFrame(dataNew)
+    
+    #Lese die weiterlaufenden FMS
+    dataOld = pd.read_csv(AUSWERTUNGFMSGOING, index_col=0)
+    auswertungFMSOld = pd.DataFrame(dataOld)
+
+    ktwFMSMerge = auswertungFMSOld.append(auswertungFMSNew, ignore_index = True, sort = False)
+    ktwFMSMerge.to_csv(AUSWERTUNGFMSGOING, encoding = 'utf-8')
 
 
 def auswertungStatistik(fahrtenStatistik):
-    global dfOut 
+    global auswertungStatistik 
     auswertung = fahrtenStatistik
     
     #MHD
@@ -270,14 +290,29 @@ def auswertungStatistik(fahrtenStatistik):
     fahrten59 = auswertung[auswertung.KFZ == "'5-KTW-9'"].shape[0]
     iFahrten59 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'5-KTW-9'")].shape[0]
 
-    dfOut = pd.DataFrame({'KFZ':["1-KTW-2", "1-KTW-3", "1-KTW-4", "1-KTW-5", "1-KTW-6", 
+    auswertungStatistik = pd.DataFrame({'KFZ':["1-KTW-2", "1-KTW-3", "1-KTW-4", "1-KTW-5", "1-KTW-6", 
                                  "5-KTW-2", "5-KTW-3", "5-KTW-4", "5-KTW-5", "5-KTW-6", "5-KTW-7", "5-KTW-8", "5-KTW-9"],
                           "Fahrten":[fahrten12, fahrten13, fahrten14, fahrten15, fahrten16,
                                      fahrten52, fahrten53, fahrten54, fahrten55, fahrten56, fahrten57, fahrten58, fahrten59],
                           "I-Fahrten":[iFahrten12, iFahrten13, iFahrten14, iFahrten15, iFahrten16,
                                        iFahrten52, iFahrten53, iFahrten54, iFahrten55, iFahrten56, iFahrten57, iFahrten58, iFahrten59]})
-    dfOut.to_csv(AUSWERTUNGSTATISTIK)
-    return(dfOut)
+    auswertungStatistik.to_csv(AUSWERTUNGSTATISTIK)
+    return(auswertungStatistik)
+
+def auswertungStatistikOngoing(auswertungStatistik):
+    """
+    Hängt die Tagesauswertung (auswertungStatistik) an das Hauptarchiv (AUSWERUNGSTATISTIKGOING) an
+    """
+    #Lese aktuelle FMS
+    dataNew = pd.read_csv(AUSWERTUNGSTATISTIK, index_col=0)
+    auswertungStatistikNew = pd.DataFrame(dataNew)
+    
+    #Lese die weiterlaufenden FMS
+    dataOld = pd.read_csv(AUSWERTUNGFMSGOING, index_col=0)
+    auswertungStatistikOld = pd.DataFrame(dataOld)
+
+    auswertungStatistikMerge = auswertungStatistikOld.append(auswertungStatistikNew, ignore_index = True, sort = False)
+    auswertungStatistikMerge.to_csv(AUSWERTUNGSTATISTIKGOING, encoding = 'utf-8')
 
 
 
@@ -290,4 +325,7 @@ abrechnung(belegArchiv)
 auswertungFMS(ktwFMS)
 auswertungStatistik(fahrtenStatistik)
 belegArchivOngoing(belegArchiv)
+ktwFMSOngoing(ktwFMS)
+auswertungFMSOngoing(auswertungFMS)
+auswertungStatistikOngoing(auswertungStatistik)
 
