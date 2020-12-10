@@ -7,7 +7,7 @@ from datetime import timedelta
 
 PATHTXT = "exportArchiv.txt"
 BELEGARCHIV = "data/belegArchiv.csv"
-BELEGARCHIVONGOING = "data/belegArchivOngoing"
+BELEGARCHIVONGOING = "data/belegArchivOngoing.csv"
 KTWFMS = "data/ktwFMS.csv"
 FAHRTENSTATISTIK = "data/fahrtenStatistik.csv"
 ABRECHNUNG = "data/abrechnung.csv"
