@@ -9,6 +9,7 @@ PATHTXT = "exportArchiv.txt"
 BELEGARCHIV = "data/belegArchiv.csv"
 BELEGARCHIVONGOING = "data/belegArchivOngoing.csv"
 KTWFMS = "data/ktwFMS.csv"
+KTWFMSGOING = "data/ktwFMSOngoing.csv"
 FAHRTENSTATISTIK = "data/fahrtenStatistik.csv"
 ABRECHNUNG = "data/abrechnung.csv"
 AUSWERTUNGFMS = "data/auswertungFMS.csv"
@@ -22,9 +23,9 @@ def data():
     Konvertiert den .txt Exportiert aus dem Belegarchiv in .csv Datei
     """
     global belegArchiv
-    data = pd.read_csv(PATHTXT, sep = ";", names=["E-Datum", "Einsatz Nr.", "KFZ", "Transport von",
-                                                  "Transport nach", "Fahrgast", "Start", "Ende",
-                                                  "Infektion", "Tarifzone Num.", "Belegart", "Tarifzone"])
+    data = pd.read_csv(PATHTXT, sep = ";", header = None, names = ["E-Datum", "Einsatz Nr.", "KFZ", "Transport von",
+                                                                 "Transport nach", "Fahrgast", "Start", "Ende",
+                                                                 "Infektion", "Tarifzone Num.", "Belegart", "Tarifzone"])
     data = data.iloc[1:]
     belegArchiv = pd.DataFrame(data)
     belegArchiv.to_csv(BELEGARCHIV, encoding = 'utf-8')
@@ -32,7 +33,7 @@ def data():
 
 def belegArchivOngoing(belegArchiv):
     """
-    Hängt die Tagesauswertung (Belegarchiv) an das Hauptarchiv (BELEGARCHIVONGOING) am
+    Hängt die Tagesauswertung (Belegarchiv) an das Hauptarchiv (BELEGARCHIVONGOING) an
     """
     #Lese aktuelles Belegarchiv
     dataNew = pd.read_csv(BELEGARCHIV, index_col=0)
@@ -57,6 +58,20 @@ def ktwFMS(belegArchiv):
     ktwFMS.to_csv(KTWFMS, encoding='utf-8')
     return(ktwFMS)
 
+def ktwFMSOngoing(ktwFMS):
+    """
+    Hängt die Tagesauswertung (ktwFMS) an das Hauptarchiv (KTWFMSGOING) an
+    """
+    #Lese aktuelle FMS
+    dataNew = pd.read_csv(KTWFMS, index_col=0)
+    ktwFMSNew = pd.DataFrame(dataNew)
+    
+    #Lese die weiterlaufenden FMS
+    dataOld = pd.read_csv(KTWFMSGOING, index_col=0)
+    ktwFMSOld = pd.DataFrame(dataOld)
+
+    ktwFMSMerge = ktwFMSOld.append(ktwFMSNew, ignore_index = True, sort = False)
+    ktwFMSMerge.to_csv(KTWFMSGOING, encoding = 'utf-8')
 
 def fahrtenStatistik(belegArchiv):
     """
@@ -264,9 +279,7 @@ def auswertungStatistik(fahrtenStatistik):
     dfOut.to_csv(AUSWERTUNGSTATISTIK)
     return(dfOut)
 
-def plotData(dfOUt):
-    df = dfOut
-    plt.plot(df["KFZ"], df["Fahrten"])
+
 
 
 
