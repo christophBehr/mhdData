@@ -7,6 +7,7 @@ from datetime import timedelta
 
 PATHTXT = "exportArchiv.txt"
 BELEGARCHIV = "data/belegArchiv.csv"
+BELEGARCHIVONGOING = "data/belegArchivOngoing"
 KTWFMS = "data/ktwFMS.csv"
 FAHRTENSTATISTIK = "data/fahrtenStatistik.csv"
 ABRECHNUNG = "data/abrechnung.csv"
@@ -26,8 +27,23 @@ def data():
                                                   "Infektion", "Tarifzone Num.", "Belegart", "Tarifzone"])
     data = data.iloc[1:]
     belegArchiv = pd.DataFrame(data)
-    belegArchiv.to_csv(BELEGARCHIV, encoding='utf-8')
+    belegArchiv.to_csv(BELEGARCHIV, encoding = 'utf-8')
     return(belegArchiv)
+
+def belegArchivOngoing(belegArchiv):
+    """
+    Hängt die Tagesauswertung (Belegarchiv) an das Hauptarchiv (BELEGARCHIVONGOING) am
+    """
+    #Lese aktuelles Belegarchiv
+    dataNew = pd.read_csv(BELEGARCHIV, index_col=0)
+    belegArchivNew = pd.DataFrame(dataNew)
+    
+    #Lese das weiterlaufende Belegarchiv
+    dataOld = pd.read_csv(BELEGARCHIVONGOING, index_col=0)
+    belegArchivOld = pd.DataFrame(dataOld)
+
+    belegArchivMerge = belegArchivOld.append(belegArchivNew, ignore_index = True, sort = False)
+    belegArchivMerge.to_csv(BELEGARCHIVONGOING, encoding = 'utf-8')
 
 
 def ktwFMS(belegArchiv):
@@ -260,5 +276,5 @@ fahrtenStatistik(belegArchiv)
 abrechnung(belegArchiv)
 auswertungFMS(ktwFMS)
 auswertungStatistik(fahrtenStatistik)
-#plotData(dfOut)
+belegArchivOngoing(belegArchiv)
 
