@@ -3,14 +3,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import datetime as dt
 from datetime import timedelta
+from database import writeToArchive
 import calendar
-import itertools
 
 
 
 AUSWERTUNGSTATISTIKGOING = "data/auswertungStatistikOngoing.csv"
 AUSWERTUNGFAHRTENMHD = "data/auswertungFahrtenMHD.csv"
 AUSWERTUNGFAHRTENDRK = "data/auswertungFahrtenDRK.csv"
+TMPTAGMHD = "data/tmpTagMHD.csv"
+TMPTAGDRK = "data/tmpTagDRK.csv"
+STATISTIKMHDONGOING = "data/statistikMHDOngoing.csv"
+STATISTIKDRKONGOING = "data/statistikDRKOngoing.csv"
+
 
 mhd = pd.DataFrame({'HiOrg': ['mhd']})
 drk = "drk"
@@ -29,7 +34,9 @@ def auswertungTag():
     frameMHDTag = frameMHDTag.T
 
     frameMHDTag = frameLable.join(frameMHDTag)
-    print(frameMHDTag)
+
+    frameMHDTag.to_csv(TMPTAGMHD)
+    
 
     #DRK
     dataDRK = pd.read_csv(AUSWERTUNGFAHRTENDRK)
@@ -43,8 +50,9 @@ def auswertungTag():
     frameDRKTag = pd.DataFrame(drkTag)
     frameDRKTag = frameDRKTag.T
     frameDRKTag = frameLable.join(frameDRKTag)
-    print(frameDRKTag)
-
     
+    frameDRKTag.to_csv(TMPTAGDRK)
+    writeToArchive(TMPTAGMHD, STATISTIKMHDONGOING)
+    writeToArchive(TMPTAGDRK, STATISTIKDRKONGOING)
 
 auswertungTag()
