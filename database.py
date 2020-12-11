@@ -214,7 +214,7 @@ def auswertungFMS(ktwFMS):
 def auswertungStatistik(fahrtenStatistik):
     global auswertungStatistik 
     auswertung = fahrtenStatistik
-      
+    datum = auswertung.at[1, "E-Datum"]  
     #MHD
     fahrten12 = auswertung[auswertung.KFZ == "'1-KTW-2'"].shape[0]
     iFahrten12 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'1-KTW-2'")].shape[0]
@@ -242,10 +242,11 @@ def auswertungStatistik(fahrtenStatistik):
     ktvp16 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'1-KTW-6'")].shape[0]
     fernfahrt16 = fernKT16 + ktvp16
 
-    auswertungMHD = pd.DataFrame({'KFZ':["1-KTW-2", "1-KTW-3", "1-KTW-4", "1-KTW-5", "1-KTW-6"],
-                          "Fahrten":[fahrten12, fahrten13, fahrten14, fahrten15, fahrten16],
-                          "I-Fahrten":[iFahrten12, iFahrten13, iFahrten14, iFahrten15, iFahrten16],
-                          "Fernfahrten":[fernfahrt12, fernfahrt13, fernfahrt14, fernfahrt15, fernfahrt16]})
+    auswertungMHD = pd.DataFrame({"E-Datum":[datum, datum, datum, datum, datum], 
+                                  "KFZ":["1-KTW-2", "1-KTW-3", "1-KTW-4", "1-KTW-5", "1-KTW-6"],
+                                  "Fahrten":[fahrten12, fahrten13, fahrten14, fahrten15, fahrten16],
+                                  "I-Fahrten":[iFahrten12, iFahrten13, iFahrten14, iFahrten15, iFahrten16],
+                                  "Fernfahrten":[fernfahrt12, fernfahrt13, fernfahrt14, fernfahrt15, fernfahrt16]})
     auswertungMHD.to_csv(AUSWERTUNGFAHRTENMHD)
     
 
@@ -291,10 +292,11 @@ def auswertungStatistik(fahrtenStatistik):
     ktvp59 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'5-KTW-9'")].shape[0]
     fernfahrt59 = fernKT59 + ktvp59
 
-    auswertungDRK = pd.DataFrame({'KFZ':["5-KTW-2", "5-KTW-3", "5-KTW-4", "5-KTW-5", "5-KTW-6", "5-KTW-7", "5-KTW-8", "5-KTW-9"],
-                          "Fahrten":[fahrten52, fahrten53, fahrten54, fahrten55, fahrten56, fahrten57, fahrten58, fahrten59],
-                          "I-Fahrten":[iFahrten52, iFahrten53, iFahrten54, iFahrten55, iFahrten56, iFahrten57, iFahrten58, iFahrten59],
-                          "Fernfahrten":[fernfahrt52, fernfahrt53, fernfahrt54, fernfahrt55, fernfahrt56, fernfahrt57, fernfahrt58, fernfahrt59]})
+    auswertungDRK = pd.DataFrame({"E-Datum":[datum, datum, datum, datum, datum, datum, datum, datum],
+                                  "KFZ":["5-KTW-2", "5-KTW-3", "5-KTW-4", "5-KTW-5", "5-KTW-6", "5-KTW-7", "5-KTW-8", "5-KTW-9"],
+                                  "Fahrten":[fahrten52, fahrten53, fahrten54, fahrten55, fahrten56, fahrten57, fahrten58, fahrten59],
+                                  "I-Fahrten":[iFahrten52, iFahrten53, iFahrten54, iFahrten55, iFahrten56, iFahrten57, iFahrten58, iFahrten59],
+                                  "Fernfahrten":[fernfahrt52, fernfahrt53, fernfahrt54, fernfahrt55, fernfahrt56, fernfahrt57, fernfahrt58, fernfahrt59]})
     auswertungDRK.to_csv(AUSWERTUNGFAHRTENDRK)
 
     auswertungStatistik = pd.DataFrame({'KFZ':["1-KTW-2", "1-KTW-3", "1-KTW-4", "1-KTW-5", "1-KTW-6", 

@@ -12,24 +12,37 @@ AUSWERTUNGSTATISTIKGOING = "data/auswertungStatistikOngoing.csv"
 AUSWERTUNGFAHRTENMHD = "data/auswertungFahrtenMHD.csv"
 AUSWERTUNGFAHRTENDRK = "data/auswertungFahrtenDRK.csv"
 
-mhd = ["1-KTW-2", "1-KTW-3", "1-KTW-4", "1-KTW-5", "1-KTW-6"]
-drk = ["5-KTW-2", "5-KTW-3", "5-KTW-4", "5-KTW-5", "5-KTW-6", "5-KTW-7", "5-KTW-8", "5-KTW-9"]
+mhd = pd.DataFrame({'HiOrg': ['mhd']})
+drk = "drk"
 
 def auswertungTag():
     #MHD
     dataMHD = pd.read_csv(AUSWERTUNGFAHRTENMHD)
+    datum = dataMHD.at[1, "E-Datum"]
+    mhd = "mhd" 
+    mhdLable = {'Datum':[datum], 'HiOrg':[mhd]}
+    frameLable = pd.DataFrame(data = mhdLable)
+
     frameMHD = pd.DataFrame(dataMHD, columns = ["Fahrten", "I-Fahrten", "Fernfahrten"])
     mhdTag = frameMHD.sum()
     frameMHDTag = pd.DataFrame(mhdTag)
     frameMHDTag = frameMHDTag.T
+
+    frameMHDTag = frameLable.join(frameMHDTag)
     print(frameMHDTag)
 
     #DRK
     dataDRK = pd.read_csv(AUSWERTUNGFAHRTENDRK)
+    datum = dataDRK.at[1, "E-Datum"]
+    drk = "drk" 
+    drkLable = {'Datum':[datum], 'HiOrg':[drk]}
+    frameLable = pd.DataFrame(data = drkLable)
+
     frameDRK = pd.DataFrame(dataDRK, columns = ["Fahrten", "I-Fahrten", "Fernfahrten"])
     drkTag = frameDRK.sum()
     frameDRKTag = pd.DataFrame(drkTag)
     frameDRKTag = frameDRKTag.T
+    frameDRKTag = frameLable.join(frameDRKTag)
     print(frameDRKTag)
 
     
