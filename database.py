@@ -16,6 +16,8 @@ AUSWERTUNGFMS = "data/auswertungFMS.csv"
 AUSWERTUNGFMSGOING = "data/auswertungFMSOngoing.csv"
 AUSWERTUNGSTATISTIK = "data/auswertungStatistik.csv"
 AUSWERTUNGSTATISTIKGOING = "data/auswertungStatistikOngoing.csv"
+AUSWERTUNGFAHRTENMHD = "data/auswertungFahrtenMHD.csv"
+AUSWERTUNGFAHRTENDRK = "data/auswertungFahrtenDRK.csv"
 
 belegArchiv = None
 dfOut = None
@@ -61,7 +63,7 @@ def fahrtenStatistik(belegArchiv):
     Parameter: E-Datum, KFZ, Transport nach, Infektion
     """
     global fahrtenStatistik
-    fahrtenStatistik = belegArchiv[["E-Datum", "KFZ", "Transport nach", "Infektion"]]
+    fahrtenStatistik = belegArchiv[["E-Datum", "KFZ", "Transport nach", "Infektion", "Tarifzone"]]
    
     fahrtenStatistik.to_csv(FAHRTENSTATISTIK, encoding='utf-8')
     return(fahrtenStatistik)
@@ -101,7 +103,7 @@ def auswertungFMS(ktwFMS):
 
     """
     Instanziere Dienstzeiten DRK 1-9
-    KTW 5-9 ist meistens der Nacht KTW hier aufpassen bei Fahrzuegwechsel
+    TODO KTW 5-9 ist meistens der Nacht KTW hier aufpassen bei Fahrzuegwechsel
     """
     dienst52 = '06:00'
     start52 = dt.datetime.strptime(dienst52, '%H:%M')
@@ -212,43 +214,97 @@ def auswertungFMS(ktwFMS):
 def auswertungStatistik(fahrtenStatistik):
     global auswertungStatistik 
     auswertung = fahrtenStatistik
-    
+      
     #MHD
     fahrten12 = auswertung[auswertung.KFZ == "'1-KTW-2'"].shape[0]
     iFahrten12 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'1-KTW-2'")].shape[0]
+    fernKT12 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'1-KTW-2'")].shape[0]
+    ktvp12 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'1-KTW-2'")].shape[0]
+    fernfahrt12 = fernKT12 + ktvp12
     fahrten13 = auswertung[auswertung.KFZ == "'1-KTW-3'"].shape[0]
     iFahrten13 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'1-KTW-3'")].shape[0]
+    fernKT13 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'1-KTW-3'")].shape[0]
+    ktvp13 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'1-KTW-3'")].shape[0]
+    fernfahrt13 = fernKT13 + ktvp13
     fahrten14 = auswertung[auswertung.KFZ == "'1-KTW-4'"].shape[0]
     iFahrten14 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'1-KTW-4'")].shape[0]
+    fernKT14 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'1-KTW-4'")].shape[0]
+    ktvp14 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'1-KTW-4'")].shape[0]
+    fernfahrt14 = fernKT14 + ktvp14
     fahrten15 = auswertung[auswertung.KFZ == "'1-KTW-5'"].shape[0]
     iFahrten15 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'1-KTW-5'")].shape[0]
+    fernKT15 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'1-KTW-5'")].shape[0]
+    ktvp15 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'1-KTW-5'")].shape[0]
+    fernfahrt15 = fernKT15 + ktvp15
     fahrten16 = auswertung[auswertung.KFZ == "'1-KTW-6'"].shape[0]
     iFahrten16 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'1-KTW-6'")].shape[0]
+    fernKT16 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'1-KTW-6'")].shape[0]
+    ktvp16 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'1-KTW-6'")].shape[0]
+    fernfahrt16 = fernKT16 + ktvp16
+
+    auswertungMHD = pd.DataFrame({'KFZ':["1-KTW-2", "1-KTW-3", "1-KTW-4", "1-KTW-5", "1-KTW-6"],
+                          "Fahrten":[fahrten12, fahrten13, fahrten14, fahrten15, fahrten16],
+                          "I-Fahrten":[iFahrten12, iFahrten13, iFahrten14, iFahrten15, iFahrten16],
+                          "Fernfahrten":[fernfahrt12, fernfahrt13, fernfahrt14, fernfahrt15, fernfahrt16]})
+    auswertungMHD.to_csv(AUSWERTUNGFAHRTENMHD)
+    
 
     #DRK
     fahrten52 = auswertung[auswertung.KFZ == "'5-KTW-2'"].shape[0]
     iFahrten52 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'5-KTW-2'")].shape[0]
+    fernKT52 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'5-KTW-2'")].shape[0]
+    ktvp52 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'5-KTW-2'")].shape[0]
+    fernfahrt52 = fernKT52 + ktvp52
     fahrten53 = auswertung[auswertung.KFZ == "'5-KTW-3'"].shape[0]
     iFahrten53 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'5-KTW-3'")].shape[0]
+    fernKT53 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'5-KTW-3'")].shape[0]
+    ktvp53 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'5-KTW-3'")].shape[0]
+    fernfahrt53 = fernKT53 + ktvp53
     fahrten54 = auswertung[auswertung.KFZ == "'5-KTW-4'"].shape[0]
     iFahrten54 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'5-KTW-4'")].shape[0]
+    fernKT54 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'5-KTW-4'")].shape[0]
+    ktvp54 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'5-KTW-4'")].shape[0]
+    fernfahrt54 = fernKT54 + ktvp54
     fahrten55 = auswertung[auswertung.KFZ == "'5-KTW-5'"].shape[0]
     iFahrten55 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'5-KTW-5'")].shape[0]
+    fernKT55 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'5-KTW-5'")].shape[0]
+    ktvp55 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'5-KTW-5'")].shape[0]
+    fernfahrt55 = fernKT55 + ktvp55
     fahrten56 = auswertung[auswertung.KFZ == "'5-KTW-6'"].shape[0]
     iFahrten56 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'5-KTW-6'")].shape[0]
+    fernKT56 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'5-KTW-6'")].shape[0]
+    ktvp56 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'5-KTW-6'")].shape[0]
+    fernfahrt56 = fernKT56 + ktvp56
     fahrten57 = auswertung[auswertung.KFZ == "'5-KTW-7'"].shape[0]
     iFahrten57 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'5-KTW-7'")].shape[0]
+    fernKT57 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'5-KTW-7'")].shape[0]
+    ktvp57 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'5-KTW-7'")].shape[0]
+    fernfahrt57 = fernKT57 + ktvp57
     fahrten58 = auswertung[auswertung.KFZ == "'5-KTW-8'"].shape[0]
     iFahrten58 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'5-KTW-8'")].shape[0]
+    fernKT58 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'5-KTW-8'")].shape[0]
+    ktvp58 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'5-KTW-8'")].shape[0]
+    fernfahrt58 = fernKT58 + ktvp58
     fahrten59 = auswertung[auswertung.KFZ == "'5-KTW-9'"].shape[0]
     iFahrten59 = auswertung[(auswertung["Infektion"] == "'J'") & (auswertung["KFZ"] == "'5-KTW-9'")].shape[0]
+    fernKT59 = auswertung[(auswertung["Tarifzone"] == "'FERN-KT'") & (auswertung["KFZ"] == "'5-KTW-9'")].shape[0]
+    ktvp59 = auswertung[(auswertung["Tarifzone"] == "'KTVP-FERN'") & (auswertung["KFZ"] == "'5-KTW-9'")].shape[0]
+    fernfahrt59 = fernKT59 + ktvp59
+
+    auswertungDRK = pd.DataFrame({'KFZ':["5-KTW-2", "5-KTW-3", "5-KTW-4", "5-KTW-5", "5-KTW-6", "5-KTW-7", "5-KTW-8", "5-KTW-9"],
+                          "Fahrten":[fahrten52, fahrten53, fahrten54, fahrten55, fahrten56, fahrten57, fahrten58, fahrten59],
+                          "I-Fahrten":[iFahrten52, iFahrten53, iFahrten54, iFahrten55, iFahrten56, iFahrten57, iFahrten58, iFahrten59],
+                          "Fernfahrten":[fernfahrt52, fernfahrt53, fernfahrt54, fernfahrt55, fernfahrt56, fernfahrt57, fernfahrt58, fernfahrt59]})
+    auswertungDRK.to_csv(AUSWERTUNGFAHRTENDRK)
 
     auswertungStatistik = pd.DataFrame({'KFZ':["1-KTW-2", "1-KTW-3", "1-KTW-4", "1-KTW-5", "1-KTW-6", 
                                  "5-KTW-2", "5-KTW-3", "5-KTW-4", "5-KTW-5", "5-KTW-6", "5-KTW-7", "5-KTW-8", "5-KTW-9"],
                           "Fahrten":[fahrten12, fahrten13, fahrten14, fahrten15, fahrten16,
                                      fahrten52, fahrten53, fahrten54, fahrten55, fahrten56, fahrten57, fahrten58, fahrten59],
                           "I-Fahrten":[iFahrten12, iFahrten13, iFahrten14, iFahrten15, iFahrten16,
-                                       iFahrten52, iFahrten53, iFahrten54, iFahrten55, iFahrten56, iFahrten57, iFahrten58, iFahrten59]})
+                                       iFahrten52, iFahrten53, iFahrten54, iFahrten55, iFahrten56, iFahrten57, iFahrten58, iFahrten59],
+                           "Fernfahrten":[fernfahrt12, fernfahrt13, fernfahrt14, fernfahrt15, fernfahrt16,
+                                          fernfahrt52, fernfahrt53, fernfahrt54, fernfahrt55, fernfahrt56, fernfahrt57, fernfahrt58, fernfahrt59]})
     auswertungStatistik.to_csv(AUSWERTUNGSTATISTIK)
     writeToArchive(AUSWERTUNGSTATISTIK, AUSWERTUNGSTATISTIKGOING)
     return(auswertungStatistik)
